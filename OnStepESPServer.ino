@@ -170,8 +170,8 @@ Restart:
     WebTimeout=EEPROM_readInt(10);
     CmdTimeout=EEPROM_readInt(12);
 
-//    EEPROM_readString(100,wifi_sta_ssid);
-//    EEPROM_readString(150,wifi_sta_pwd);
+    EEPROM_readString(100,wifi_sta_ssid);
+    EEPROM_readString(150,wifi_sta_pwd);
     EEPROM_readString(200,masterPassword);
     wifi_sta_ip[0]=EEPROM.read(20); wifi_sta_ip[1]=EEPROM.read(21); wifi_sta_ip[2]=EEPROM.read(22); wifi_sta_ip[3]=EEPROM.read(23);
     wifi_sta_gw[0]=EEPROM.read(24); wifi_sta_gw[1]=EEPROM.read(25); wifi_sta_gw[2]=EEPROM.read(26); wifi_sta_gw[3]=EEPROM.read(27);
