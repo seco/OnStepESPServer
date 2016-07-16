@@ -100,7 +100,7 @@ void handleRoot() {
   sprintf(temp,html_indexSidereal,temp2);
   data += temp;
 
-  if (!strstr(stat,"A")) {  // not AltAzm
+  if ((!strstr(stat,"A")) && (!strstr(stat,"k"))) {  // not AltAzm and not Fork_Alt
     Serial.print(":GX02#");
     temp2[Serial.readBytesUntil('#',temp2,20)]=0;
     if (strlen(temp2)<=0) { strcpy(temp2,"0"); }
