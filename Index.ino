@@ -34,6 +34,7 @@ void handleRoot() {
   char temp1[80]="";
   char temp2[80]="";
   char temp3[80]="";
+  char temp4[40]="";
 
   String data=html_head1;
   data += html_headerIdx; // page refresh
@@ -136,6 +137,7 @@ void handleRoot() {
   Serial.print(":GX94#");
   temp2[Serial.readBytesUntil('#',temp2,20)]=0;
   if (strlen(temp2)<=0) { strcpy(temp2,"0"); }
+  bool meridianFlipsDisabled=strstr(temp2, "N");
   pierSide=strtol(&temp2[0],NULL,10);
   if ((pierSide==PierSideFlipWE1) ||
       (pierSide==PierSideFlipWE2) ||
@@ -146,8 +148,16 @@ void handleRoot() {
   if (pierSide==PierSideWest) strcpy(temp2,"West"); else
   if (pierSide==PierSideEast) strcpy(temp2,"East"); else
   if (pierSide==PierSideNone) strcpy(temp2,"None"); else strcpy(temp2,"Unknown");
-  if (strstr(temp2, "N")) strcpy(temp3,"Disabled"); else strcpy(temp3,"Enabled");
-  sprintf(temp,html_indexPier,temp2,temp3); 
+  if (meridianFlipsDisabled) strcpy(temp3,"Disabled"); else strcpy(temp3,"Enabled");
+  // auto-continue enabled
+  if (!strstr(stat,"A") && (!meridianFlipsDisabled)) { // not AltAzm and Enabled
+    Serial.print(":GX95#");
+    temp4[Serial.readBytesUntil('#',temp4,20)]=0;
+    if (strlen(temp4)>0) {
+      if (strstr(temp4, "0")) strcat(temp3,"</font> and auto-continue <font class=\"c\">Disabled"); else strcat(temp3,"</font> and auto-continue <font class=\"c\">Enabled"); 
+    }
+  }
+  sprintf(temp,html_indexPier,temp2,temp3);
   data += temp;
 
   // Tracking

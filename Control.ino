@@ -68,6 +68,10 @@ const char html_control11[] =
 "<button name=\"rr\" value=\"on\" type=\"submit\">Refraction Only</button>"
 "<button name=\"rr\" value=\"off\" type=\"submit\">Off</button>";
 const char html_control12[] = 
+"</br></br>Auto-continue (automatic Meridian flip): </br>"
+"<button name=\"ac\" value=\"on\" type=\"submit\">On</button>"
+"<button name=\"ac\" value=\"off\" type=\"submit\">Off</button>";
+const char html_control13[] = 
 "</form>\r\n";
 
 void handleControl() {
@@ -118,7 +122,7 @@ void handleControl() {
   data += html_control4c;
   data += html_control4d;
   data += html_controlAlign1;
-  if (!strstr(stat,"A")) {  // not AltAzm
+  if ((!strstr(stat,"A")) && (!strstr(stat,"k"))) {  // not AltAzm and not Fork_Alt
     data += html_controlAlign23;
   }
   data += html_controlAlign4;
@@ -127,9 +131,12 @@ void handleControl() {
   data += html_control8;
   data += html_control9;
   data += html_control10;
-  data += html_control11;
   if (!strstr(stat,"A")) {  // not AltAzm
-    data += html_control12;
+    data += html_control11;
+  }
+  data += html_control12;
+  if ((!strstr(stat,"A")) && (!strstr(stat,"k"))) {  // not AltAzm and not Fork_Alt
+    data += html_control13;
   }
   data += "</div></body></html>";
   
@@ -222,6 +229,12 @@ void processControlGet() {
     if (v=="otk") Serial.print(":To#");
     if (v=="on") Serial.print(":Tr#");
     if (v=="off") Serial.print(":Tn#");
+  }
+  // Auto-continue
+  v=server.arg("ac");
+  if (v!="") {
+    if (v=="on") Serial.print(":SX95,1#");
+    if (v=="off") Serial.print(":SX95,0#");
   }
 
   // clear any possible response
