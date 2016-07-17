@@ -154,7 +154,7 @@ void handleRoot() {
     Serial.print(":GX95#");
     temp4[Serial.readBytesUntil('#',temp4,20)]=0;
     if (strlen(temp4)>0) {
-      if (strstr(temp4, "0")) strcat(temp3,"</font> and auto-continue <font class=\"c\">Disabled"); else strcat(temp3,"</font> and auto-continue <font class=\"c\">Enabled"); 
+      if (strstr(temp4, "0")) strcat(temp3,"</font> and auto-flip <font class=\"c\">Disabled"); else strcat(temp3,"</font> and auto-flip <font class=\"c\">Enabled"); 
     }
   }
   sprintf(temp,html_indexPier,temp2,temp3);

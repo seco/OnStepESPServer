@@ -13,11 +13,14 @@ const char html_wifiSSID1[] =
 "<br/><b>Station mode (connect to an Access-Point):</b><br/>"
 "<form method=\"post\" action=\"/wifi.htm\">"
 "SSID: <input style=\"width:6em;\" name=\"stssid\" type=\"text\" value=\"%s\" maxlength=\"32\">&nbsp;&nbsp;&nbsp;"
-"Password: <input style=\"width:8em;\" name=\"stpwd\" type=\"password\" value=\"%s\" maxlength=\"39\">&nbsp;&nbsp;&nbsp;<br/>";
+"Password: <input style=\"width:8em;\" name=\"stpwd\" type=\"password\" value=\"%s\" maxlength=\"39\"><br/>";
 const char html_wifiSSID2[] =
-"Enable DHCP: <input type=\"checkbox\" name=\"stadhcp\" value=\"1\" %s> (Note: above addresses are ignored if DHCP is enabled)<br>"
+"Enable DHCP: <input type=\"checkbox\" name=\"stadhcp\" value=\"1\" %s> (Note: above addresses are ignored if DHCP is enabled)<br/>"
 "Enable Station Mode: <input type=\"checkbox\" name=\"staen\" value=\"1\" %s><br/>"
 "<button type=\"submit\">Upload</button></form><br />\r\n";
+
+const char html_wifiMAC[] = 
+"MAC: <input style=\"width:10em;\" name=\"stmac\" type=\"text\" value=\"%s\" maxlength=\"17\" disabled><br/>";
 
 const char html_wifiSTAIP[] =
 "<table><tr><td>IP Address: </td><td>"
@@ -44,6 +47,10 @@ const char html_wifiSSID3[] =
 "SSID: <input style=\"width:6em;\" name=\"apssid\" type=\"text\" value=\"%s\" maxlength=\"32\">&nbsp;&nbsp;&nbsp;"
 "Password: <input style=\"width:8em;\" name=\"appwd\" type=\"password\" value=\"%s\" maxlength=\"39\">&nbsp;&nbsp;&nbsp;"
 "Channel: <input style=\"width:2em;\" name=\"apch\" value=\"%d\" type=\"number\" min=\"1\" max=\"11\"><br/>";
+
+const char html_wifiApMAC[] = 
+"MAC: <input style=\"width:10em;\" name=\"apmac\" type=\"text\" value=\"%s\" maxlength=\"17\" disabled><br/>";
+
 const char html_wifiSSID4[] =
 "<table><tr><td>IP Address: </td><td>"
 "<input name=\"apip1\" value=\"%d\" type=\"number\" min=\"0\" max=\"255\">&nbsp;.&nbsp;"
@@ -142,7 +149,7 @@ void handleWifi() {
     server.send(200, "text/html",data);
     restartRequired=false;
     delay(1000);
-    ESP.restart();
+//    ESP.restart();
     return;
   }
 
@@ -156,16 +163,28 @@ void handleWifi() {
     return;
   }
 
-    EEPROM_readString(100,wifi_sta_ssid);
-    EEPROM_readString(150,wifi_sta_pwd);
+  EEPROM_readString(100,wifi_sta_ssid);
+  EEPROM_readString(150,wifi_sta_pwd);
     
   sprintf(temp,html_wifiSerial,CmdTimeout,WebTimeout); data += temp;
   sprintf(temp,html_wifiSSID1,wifi_sta_ssid,""); data += temp;
+  
+  uint8_t mac[6] = {0,0,0,0,0,0}; WiFi.macAddress(mac);
+  char wifi_sta_mac[80]="";
+  for (int i=0; i<6; i++) { sprintf(wifi_sta_mac,"%s%02x:",wifi_sta_mac,mac[i]); } wifi_sta_mac[strlen(wifi_sta_mac)-1]=0;
+  sprintf(temp,html_wifiMAC,wifi_sta_mac,""); data += temp;
+
   sprintf(temp,html_wifiSTAIP,wifi_sta_ip[0],wifi_sta_ip[1],wifi_sta_ip[2],wifi_sta_ip[3]); data += temp;
   sprintf(temp,html_wifiSTAGW,wifi_sta_gw[0],wifi_sta_gw[1],wifi_sta_gw[2],wifi_sta_gw[3]); data += temp;
   sprintf(temp,html_wifiSTASN,wifi_sta_sn[0],wifi_sta_sn[1],wifi_sta_sn[2],wifi_sta_sn[3]); data += temp;
   sprintf(temp,html_wifiSSID2,stationDhcpEnabled?"checked":"",stationEnabled?"checked":""); data += temp;
   sprintf(temp,html_wifiSSID3,wifi_ap_ssid,"",wifi_ap_ch); data += temp;
+
+  uint8_t macap[6] = {0,0,0,0,0,0}; WiFi.softAPmacAddress(macap);
+  char wifi_ap_mac[80]="";
+  for (int i=0; i<6; i++) { sprintf(wifi_ap_mac,"%s%02x:",wifi_ap_mac,macap[i]); } wifi_ap_mac[strlen(wifi_ap_mac)-1]=0;
+  sprintf(temp,html_wifiApMAC,wifi_ap_mac,""); data += temp;
+  
   sprintf(temp,html_wifiSSID4,wifi_ap_ip[0],wifi_ap_ip[1],wifi_ap_ip[2],wifi_ap_ip[3]); data += temp;
   sprintf(temp,html_wifiSSID5,wifi_ap_gw[0],wifi_ap_gw[1],wifi_ap_gw[2],wifi_ap_gw[3]); data += temp;
   sprintf(temp,html_wifiSSID6,wifi_ap_sn[0],wifi_ap_sn[1],wifi_ap_sn[2],wifi_ap_sn[3]); data += temp;
@@ -218,6 +237,25 @@ void processWifiGet() {
   }
 
   // --------------------------------------------------------------------------------------------------------
+
+  // Station MAC
+  v=server.arg("stmac");
+  if (v!="") {
+    // 5c:cf:7f:0f:ad:85
+    // first the length should be 17
+    if (v.length()==17) {
+      // seperators all in place
+      if ((v.charAt(2)==':') && (v.charAt(5)==':') && (v.charAt(8)==':') && (v.charAt(11)==':') && (v.charAt(14)==':')) {
+        // digits all in 0..9,A..F and validate
+        v.toUpperCase();
+        uint8_t mac[6];
+        mac[0]=hexToInt(v.substring(0,2)); mac[1]=hexToInt(v.substring(3,2)); mac[2]=hexToInt(v.substring(6,2));
+        mac[3]=hexToInt(v.substring(9,2)); mac[4]=hexToInt(v.substring(12,2)); mac[5]=hexToInt(v.substring(15,2));
+        if ((mac[0]>=0) && (mac[1]>=0) && (mac[2]>=0) && (mac[3]>=0) && (mac[4]>=0) && (mac[5]>=0)) { WiFi.macAddress(mac); restartRequired=true; }
+      }
+    }
+  }
+
   // Station SSID
   v=server.arg("stssid"); v1=v;
   if (v!="") {
@@ -282,6 +320,25 @@ void processWifiGet() {
   }
 
   // -------------------------------------------------------------------------------------------
+  
+  // Access-Point MAC
+  v=server.arg("apmac");
+  if (v!="") {
+    // 5c:cf:7f:0f:ad:85
+    // first the length should be 17
+    if (v.length()==17) {
+      // seperators all in place
+      if ((v.charAt(2)==':') && (v.charAt(5)==':') && (v.charAt(8)==':') && (v.charAt(11)==':') && (v.charAt(14)==':')) {
+        // digits all in 0..9,A..F and validate
+        v.toUpperCase();
+        uint8_t mac[6];
+        mac[0]=hexToInt(v.substring(0,2)); mac[1]=hexToInt(v.substring(3,2)); mac[2]=hexToInt(v.substring(6,2));
+        mac[3]=hexToInt(v.substring(9,2)); mac[4]=hexToInt(v.substring(12,2)); mac[5]=hexToInt(v.substring(15,2));
+        if ((mac[0]>=0) && (mac[1]>=0) && (mac[2]>=0) && (mac[3]>=0) && (mac[4]>=0) && (mac[5]>=0)) { WiFi.softAPmacAddress(mac); restartRequired=true; }
+      }
+    }
+  }
+
   // Access-Point SSID
   v=server.arg("apssid");
   if (v!="") {
@@ -347,5 +404,21 @@ void processWifiGet() {
   }
 
   if (EEwrite) EEPROM.commit();
+}
+
+// convert hex to int with error checking
+// returns -1 on error
+int hexToInt(String s) {
+  int i0;
+  int i1;
+  if (s.length()!=2) return -1;
+  char c0=s.charAt(0);
+  char c1=s.charAt(1);
+  if ( (((c0>='0') && (c0<='9')) || ((c0>='A') && (c0<='F'))) &&
+       (((c1>='0') && (c1<='9')) || ((c1>='A') && (c1<='F'))) ) {
+    if ((c0>='0') && (c0<='9')) { i0=c0-'0'; } else { i0=(c0-'A')+10; }
+    if ((c1>='0') && (c1<='9')) { i1=c1-'0'; } else { i1=(c1-'A')+10; }
+    return i0*16+i1;
+  } else return -1;
 }
 

@@ -68,7 +68,7 @@ const char html_control11[] =
 "<button name=\"rr\" value=\"on\" type=\"submit\">Refraction Only</button>"
 "<button name=\"rr\" value=\"off\" type=\"submit\">Off</button>";
 const char html_control12[] = 
-"</br></br>Auto-continue (automatic Meridian flip): </br>"
+"</br></br>Auto-flip (automatic Meridian flip): </br>"
 "<button name=\"ac\" value=\"on\" type=\"submit\">On</button>"
 "<button name=\"ac\" value=\"off\" type=\"submit\">Off</button>";
 const char html_control13[] = 
