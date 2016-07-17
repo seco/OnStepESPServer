@@ -99,7 +99,7 @@ const char html_login[] =
 "Enable either station <b>OR</b> AP mode, both enabled can cause performance issues.&nbsp;&nbsp;"
 "However, if just setting up or testing it can be desirable to enable both modes temporarily to guard against being locked out.<br/>"
 "If locked out of the ESP8266, a Sketch uploaded to the MCU (Teensy3.2, Launchpad, etc.) which sends an 'R' at 9600 baud on the serial interface "
-"in reply to any '#' recieved will cause a reset to AP only enabled and the default SSID/Password.<br/><br/>"
+"in reply to any '#' received will cause a reset to AP only enabled and the default SSID/Password.<br/><br/>"
 "\r\n";
 
 bool restartRequired=false;
