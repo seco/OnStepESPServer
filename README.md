@@ -1,6 +1,6 @@
 # OnStepESPServer
 
-This is the ESP8266-01 webserver for OnStep.  It provides WiFi (IP) access to connect to OnStep via command channel and/or website.  This works with Sky Safari (tablets/phones) and my ASCOM driver (PC.)  Support for it in my Andoid App isn't available yet.
+This is the ESP8266-01 webserver for OnStep.  It provides WiFi (IP) access to connect to OnStep via command channel and/or website.  This works with Sky Safari (tablets/phones) and my ASCOM driver (PC.)  Support for it in my Andoid App is now available in a beta at the Google Play Store https://play.google.com/apps/testing/com.onstepcontroller2
 
 Configure the ESP8266-01 using the wiring as shown in numerous places on the internet to get the module in firmware upload mode.  To send the firmware I use the Arduino 1.6.8 IDE with the add-on for the ESP8266.  To get this setup...
 Look in the Arduino Preferences menu and place this line in the additional "Boards Manager" area:
