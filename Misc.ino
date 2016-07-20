@@ -57,7 +57,8 @@ boolean readLX200Bytes(char* command,char* recvBuffer,long timeOutMs) {
       if (strchr("edrn",command[2])) shortResponse=true;
     }
     if (command[1]=='U') noResponse=true;
-    if (command[1]=='W') { noResponse=true; }
+    if ((command[1]=='W') && (command[2]!='?')) { noResponse=true; }
+    if ((command[1]=='W') && (command[2]=='?')) { shortResponse=true; }
     if ((command[1]=='$') && (command[2]=='Q') && (command[3]=='Z')) {
       if (strchr("+-Z/!",command[4])) noResponse=true;
     }
