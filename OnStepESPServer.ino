@@ -40,7 +40,7 @@
 // -------------------------------------------------------------------------------
 
 #define Product "On-Esp"
-#define Version "0.5"
+#define Version "0.6"
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
@@ -131,7 +131,8 @@ void handleNotFound(){
 }
 
 void setup(void){
-
+  delay(3000);
+  
   EEPROM.begin(1024);
 
 Restart:
@@ -202,7 +203,10 @@ Again:
   if ((c=='R') || (!accessPointEnabled && !stationEnabled)) {
     // reset EEPROM values, triggers an init
     EEPROM_writeInt(0,0); EEPROM_writeInt(2,0);
-    goto Restart;
+    EEPROM.commit();
+    Serial.println();
+    Serial.println("Cycle power for reset to defaults.");
+    Serial.println();
   }
  
   // switch OnStep Serial1 up to ? baud
@@ -248,7 +252,7 @@ Again:
 //  stationEnabled=true;
 //  accessPointEnabled=false;
 
-  if (!stationDhcpEnabled) WiFi.config(wifi_sta_ip, wifi_sta_gw, wifi_sta_sn);
+  if ((stationEnabled) && (!stationDhcpEnabled)) WiFi.config(wifi_sta_ip, wifi_sta_gw, wifi_sta_sn);
   if (accessPointEnabled) WiFi.softAPConfig(wifi_ap_ip, wifi_ap_gw, wifi_ap_sn);
   
   if (accessPointEnabled && !stationEnabled) {
