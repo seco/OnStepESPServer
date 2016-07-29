@@ -107,7 +107,7 @@ void handleConfig() {
   data += temp;
   if (temp1[6]=='0') strcpy(temp2,"OFF"); else
   if (temp1[6]=='1') strcpy(temp2,"ON (internal pullup resistor off)"); else
-  if (temp2[6]=='2') strcpy(temp2,"ON (internal pullup resistor on)"); else strcpy(temp2,"UNKNOWN");
+  if (temp1[6]=='2') strcpy(temp2,"ON (internal pullup resistor on)"); else strcpy(temp2,"UNKNOWN");
   sprintf(temp,html_configPEC,temp2);
   data += temp;
   if (temp1[7]=='0') strcpy(temp2,"OFF"); else
