@@ -66,6 +66,7 @@ void handleRoot() {
   data += temp;
   data += html_index2;
   data += html_links1;
+  
   data += html_links2;
   data += html_links3;
 
@@ -183,7 +184,7 @@ void handleRoot() {
 
   // Last Error
   strcpy(temp2,"</font><font class=\"g\">None");
-  lastError=(Errors)(temp1[strlen(temp1)-1]-'0');
+  lastError=(Errors)(stat[strlen(stat)-1]-'0');
   if (lastError==ERR_NONE) strcpy(temp2,"</font><font class=\"g\">None"); else
   if (lastError==ERR_MOTOR_FAULT) strcpy(temp2,"Motor Fault"); else
   if (lastError==ERR_ALT) strcpy(temp2,"Altitude Min/Max"); else
