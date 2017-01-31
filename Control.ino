@@ -170,7 +170,7 @@ void processControlGet() {
     if ( (atoi2((char *)v.c_str(),&i)) && ((i>=2016) && (i<=9999))) {
       get_temp_year=i-2000;
       char temp[10];
-      sprintf(temp,":ST%02d/%02d/%02d#",get_temp_month,get_temp_day,get_temp_year);
+      sprintf(temp,":SC%02d/%02d/%02d#",get_temp_month,get_temp_day,get_temp_year);
       Serial.print(temp);
     }
   }
