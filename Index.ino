@@ -184,7 +184,7 @@ void handleRoot() {
   if (strlen(temp4)>6) {
     double tr=0;
     tr=atof(temp4);
-    dtostrf(tr,0,3,temp4);
+    dtostrf(tr,5,3,temp4);
     sprintf(temp,"Tracking Rate: <font class=\"c\">%sHz</font><br />",temp4);
     data += temp;
   }
