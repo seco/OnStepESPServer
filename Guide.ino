@@ -29,7 +29,10 @@ const char html_guideControls6[] =
 "<button type=\"button\" style=\"width: 60px; height: 50px;\" onmousedown=\"guide('w','1')\" onmouseup=\"guide('w','0')\">West</button><br />";
 const char html_guideControls7[] = 
 "<button type=\"button\" style=\"width: 60px; height: 50px;\" onmousedown=\"guide('s','1')\" onmouseup=\"guide('s','0')\">South</button>"
-"</div><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />\r\n";
+"</div><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />";
+const char html_guideControls8[] = 
+"<form method=\"get\" action=\"/guide.htm\">"
+">&nbsp;<button name=\"gu\" value=\"q\" type=\"submit\" style=\"height: 40px;\">Stop Slew/Guide!</button>&nbsp;<<br /><br /></form>\r\n";
 
 void handleGuide() {
   Serial.setTimeout(WebTimeout);
@@ -77,6 +80,7 @@ void handleGuide() {
   data += html_guideControls5;
   data += html_guideControls6;
   data += html_guideControls7;
+  data += html_guideControls8;
   data += "</div></body></html>";
 
   server.send(200, "text/html",data);
@@ -105,6 +109,7 @@ void processGuideGet() {
     if (v=="7") Serial.print(":R7#");
     if (v=="8") Serial.print(":R8#");
     if (v=="9") Serial.print(":R9#");
+    if (v=="q") Serial.print(":Q#");
   }
   v=server.arg("dr");
   if (v!="") {

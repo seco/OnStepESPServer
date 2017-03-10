@@ -43,8 +43,8 @@ const char html_controlAlign6[] = "<button name=\"al\" value=\"6\" type=\"submit
 const char html_controlAlign7[] = "<button name=\"al\" value=\"7\" type=\"submit\">7 Star</button>";
 const char html_controlAlign8[] = "<button name=\"al\" value=\"8\" type=\"submit\">8 Star</button>";
 const char html_controlAlign9[] = "<button name=\"al\" value=\"9\" type=\"submit\">9 Star</button>";
-const char html_controlAlignX[] =
-"<br /><button name=\"al\" value=\"n\" type=\"submit\">Accept</button>"
+const char html_controlAlignA[] = "<br /><button name=\"al\" value=\"n\" type=\"submit\">Accept</button>";
+const char html_controlAlignB[] = "&nbsp;&nbsp;>&nbsp;<button name=\"al\" value=\"q\" type=\"submit\">Stop Slew!</button>&nbsp;<"
 "</form><br />\r\n";
 const char html_control6[] = 
 "Home/Park: "
@@ -147,7 +147,8 @@ void handleControl() {
   if (AlignMaxNumStars>=7) data += html_controlAlign7;
   if (AlignMaxNumStars>=8) data += html_controlAlign8;
   if (AlignMaxNumStars>=9) data += html_controlAlign9;
-  data += html_controlAlignX;
+  data += html_controlAlignA;
+  data += html_controlAlignB;
   data += html_control6;
   data += html_control7;
   data += html_control8;
@@ -226,6 +227,7 @@ void processControlGet() {
     if (v=="8") Serial.print(":A8#");
     if (v=="9") Serial.print(":A9#");
     if (v=="n") Serial.print(":A+#");
+    if (v=="q") Serial.print(":Q#");
   }
   // Home/Park
   v=server.arg("hm");
