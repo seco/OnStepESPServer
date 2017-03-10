@@ -157,7 +157,7 @@ void handleControl() {
     data += html_control11;
   }
   data += html_control12;
-  if ((!strstr(stat,"A")) && (!strstr(stat,"k"))) {  // not AltAzm and not Fork_Alt
+  if (strstr(stat,"E")) {  // GEM only
     data += html_control13;
   }
   data += "</div></body></html>";
