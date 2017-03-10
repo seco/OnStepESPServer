@@ -26,6 +26,7 @@ const char* html_indexPier = "Pier Side=<font class=\"c\">%s</font> (meridian fl
 const char* html_indexTracking = "Tracking: <font class=\"c\">%s %s</font><br />";
 const char* html_indexPark = "Park: <font class=\"c\">%s</font><br /><br />";
 const char* html_indexLastError = "Last Error: <font class=\"c\">%s</font><br />";
+const char* html_indexMaxSpeed = "Maximum slew speed: <font class=\"c\">%s</font>&deg;/s<br /><br />";
 const char* html_indexMaxRate = "Current MaxRate: <font class=\"c\">%ld</font> (Default MaxRate: <font class=\"c\">%ld</font>)<br /><br />";
 const char* html_indexWorkload = "Workload: <font class=\"c\">%s</font><br />";
 
@@ -150,13 +151,15 @@ void handleRoot() {
   if (pierSide==PierSideWest) strcpy(temp2,"West"); else
   if (pierSide==PierSideEast) strcpy(temp2,"East"); else
   if (pierSide==PierSideNone) strcpy(temp2,"None"); else strcpy(temp2,"Unknown");
-  if (meridianFlipsDisabled) strcpy(temp3,"Disabled"); else strcpy(temp3,"Enabled");
-  // auto-continue enabled
-  if (!strstr(stat,"A") && (!meridianFlipsDisabled)) { // not AltAzm and Enabled
-    Serial.print(":GX95#");
-    temp4[Serial.readBytesUntil('#',temp4,20)]=0;
-    if (strlen(temp4)>0) {
-      if (strstr(temp4, "0")) strcat(temp3,"</font> and auto-flip <font class=\"c\">Disabled"); else strcat(temp3,"</font> and auto-flip <font class=\"c\">Enabled"); 
+  if (meridianFlipsDisabled) strcpy(temp3,"Disabled"); else {
+    strcpy(temp3,"Enabled");
+    // automatic meridian flips
+    if (!strstr(stat,"A") && (!meridianFlipsDisabled)) { // not AltAzm and Enabled
+      Serial.print(":GX95#");
+      temp4[Serial.readBytesUntil('#',temp4,20)]=0;
+      if (strlen(temp4)>0) {
+        if (strstr(temp4, "0")) strcat(temp3,"</font>, <font class=\"c\">Automatic"); else strcat(temp3,"</font>, <font class=\"c\">not Automatic"); 
+      }
     }
   }
   sprintf(temp,html_indexPier,temp2,temp3);
@@ -166,19 +169,23 @@ void handleRoot() {
   if (strstr(stat,"N") && strstr(stat,"n")) strcpy(temp2,"Off"); else
   if (!strstr(stat,"n")) strcpy(temp2,"On"); else
   if (!strstr(stat,"N")) strcpy(temp2,"Slewing");
-  strcpy(temp3,"(");
+  
+  strcpy(temp3,"</font>(<font class=\"c\">");
   if (strstr(stat,"S")) strcat(temp3,"PPS Sync, ");
   if (strstr(stat,"r") && !strstr(temp2,"t")) strcat(temp3,"Refr. Compensation, ");
   if (strstr(stat,"r") && strstr(temp2,"t")) strcat(temp3,"Full Compensation, ");
-  if (temp3[strlen(temp3)-2]==',') { temp3[strlen(temp3)-2]=')'; temp3[strlen(temp3)-1]=0; } else strcpy(temp3,"");
+  if (temp3[strlen(temp3)-2]==',') { temp3[strlen(temp3)-2]=0; strcat(temp3,"</font>)<font class=\"c\">"); } else strcpy(temp3,"");
   sprintf(temp,html_indexTracking,temp2,temp3);
   data += temp;
 
   // Tracking rate
   Serial.print(":GT#");
   temp4[Serial.readBytesUntil('#',temp4,20)]=0;
-  if (strlen(temp4)>7) {
-    sprintf(temp,"Tracking Rate: <font class=\"c\">%sHz<\font><br />",temp4);
+  if (strlen(temp4)>6) {
+    double tr=0;
+    tr=atof(temp4);
+    dtostrf(tr,0,3,temp4);
+    sprintf(temp,"Tracking Rate: <font class=\"c\">%sHz</font><br />",temp4);
     data += temp;
   }
 
@@ -187,7 +194,7 @@ void handleRoot() {
   if (strstr(stat,"P")) strcpy(temp2,"Parked"); else
   if (strstr(stat,"I")) strcpy(temp2,"Parking"); else
   if (strstr(stat,"F")) strcpy(temp2,"Park Failed"); else strcpy(temp2,"Unknown");
-  if (strstr(stat,"H")) strcat(temp2," (At Home)");
+  if (strstr(stat,"H")) strcat(temp2," </font>(<font class=\"c\">At Home</font>)<font class=\"c\">");
   sprintf(temp,html_indexPark,temp2);
   data += temp;
 
@@ -206,17 +213,25 @@ void handleRoot() {
   sprintf(temp,html_indexLastError,temp2);
   data += temp;
 
-  // Slew rate
-  Serial.print(":GX92#");
+  // Slew speed
+  Serial.print(":GX97#");
   temp1[Serial.readBytesUntil('#',temp1,20)]=0;
-  if (strlen(temp1)<=0) { strcpy(temp1,"0"); }
-  long maxRate=strtol(&temp1[0],NULL,10);
-  Serial.print(":GX93#");
-  temp1[Serial.readBytesUntil('#',temp1,20)]=0;
-  if (strlen(temp1)<=0) { strcpy(temp1,"0"); }
-  long MaxRate=strtol(&temp1[0],NULL,10);;
-  sprintf(temp,html_indexMaxRate,maxRate,MaxRate);
-  data += temp;
+  if (strlen(temp1)>2) {
+    sprintf(temp,html_indexMaxSpeed,temp1);
+    data += temp;
+  } else {
+    // fall back to MaxRate display if not supported
+    Serial.print(":GX92#");
+    temp1[Serial.readBytesUntil('#',temp1,20)]=0;
+    if (strlen(temp1)<=0) { strcpy(temp1,"0"); }
+    long maxRate=strtol(&temp1[0],NULL,10);
+    Serial.print(":GX93#");
+    temp1[Serial.readBytesUntil('#',temp1,20)]=0;
+    if (strlen(temp1)<=0) { strcpy(temp1,"0"); }
+    long MaxRate=strtol(&temp1[0],NULL,10);;
+    sprintf(temp,html_indexMaxRate,maxRate,MaxRate);
+    data += temp;
+  }
 
   // Loop time
   Serial.print(":GXFA#");
