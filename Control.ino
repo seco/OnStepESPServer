@@ -1,7 +1,9 @@
 // The control.htm page ----------------------------------------------------------------------------------
 
-const char html_control1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
-const char html_control2[] = "</b></td><td align=\"right\"><b><font size=\"5\">CONTROL</font></b></td></tr></table><br />";
+const char html_control1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b><font size=\"5\">%s</font></b></td><td align=\"right\"><b>" Product " " Version " (OnStep %s)</b>";
+const char html_control2[] = "</td></tr></table>";
+//const char html_control1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
+//const char html_control2[] = "</b></td><td align=\"right\"><b><font size=\"5\">CONTROL</font></b></td></tr></table><br />";
 const char html_control3[] = "</div><div class=\"b\">\r\n";
 const char html_control4a[] = 
 "Date/Time:"
@@ -33,10 +35,15 @@ const char html_controlAlign1[] =
 "Align: "
 "<form method=\"get\" action=\"/control.htm\">"
 "<button name=\"al\" value=\"1\" type=\"submit\">1 Star</button>";
-const char html_controlAlign23[] = 
-"<button name=\"al\" value=\"2\" type=\"submit\">2 Star</button>"
-"<button name=\"al\" value=\"3\" type=\"submit\">3 Star</button>";
-const char html_controlAlign4[] = 
+const char html_controlAlign2[] = "<button name=\"al\" value=\"2\" type=\"submit\">2 Star</button>";
+const char html_controlAlign3[] = "<button name=\"al\" value=\"3\" type=\"submit\">3 Star</button>";
+const char html_controlAlign4[] = "<button name=\"al\" value=\"4\" type=\"submit\">4 Star</button>";
+const char html_controlAlign5[] = "<button name=\"al\" value=\"5\" type=\"submit\">5 Star</button>";
+const char html_controlAlign6[] = "<button name=\"al\" value=\"6\" type=\"submit\">6 Star</button>";
+const char html_controlAlign7[] = "<button name=\"al\" value=\"7\" type=\"submit\">7 Star</button>";
+const char html_controlAlign8[] = "<button name=\"al\" value=\"8\" type=\"submit\">8 Star</button>";
+const char html_controlAlign9[] = "<button name=\"al\" value=\"9\" type=\"submit\">9 Star</button>";
+const char html_controlAlignX[] =
 "<br /><button name=\"al\" value=\"n\" type=\"submit\">Accept</button>"
 "</form><br />\r\n";
 const char html_control6[] = 
@@ -83,7 +90,17 @@ void handleControl() {
   char temp3[80]="";
 
   processControlGet();
-
+ 
+  // Get the Align mode
+  if (AlignMaxNumStars==-1) {
+    Serial.print(":A?#");
+    temp1[Serial.readBytesUntil('#',temp1,20)]=0;
+    AlignMaxNumStars=3;
+    if (temp1[0]!=0) {
+      if ((temp1[0]>'0') && (temp1[0]<'9')) AlignMaxNumStars=temp1[0]-'0';
+    }
+  }
+  
   String data=html_head1;
   data += html_main_css1;
   data += html_main_css2;
@@ -104,16 +121,16 @@ void handleControl() {
   // finish the standard http response header
   Serial.print(":GVP#");
   temp2[Serial.readBytesUntil('#',temp2,20)]=0; 
-  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); }
+  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); } else { for (int i=2; i<7; i++) temp2[i]=temp2[i+1]; }
   Serial.print(":GVN#");
   temp3[Serial.readBytesUntil('#',temp3,20)]=0; 
   if (strlen(temp3)<=0) { strcpy(temp3,"N/A"); }
   sprintf(temp,html_control1,temp2,temp3);
   data += temp;
   data += html_control2;
-  data += html_links1;
-  data += html_links2;
-  data += html_links3;
+  data += html_links1ct;
+  data += html_links2ct;
+  data += html_links3ct;
 
   // and the remainder of the page
   data += html_control3;
@@ -122,10 +139,15 @@ void handleControl() {
   data += html_control4c;
   data += html_control4d;
   data += html_controlAlign1;
-  if ((!strstr(stat,"A")) && (!strstr(stat,"k"))) {  // not AltAzm and not Fork_Alt
-    data += html_controlAlign23;
-  }
-  data += html_controlAlign4;
+  if (AlignMaxNumStars>=2) data += html_controlAlign2;
+  if (AlignMaxNumStars>=3) data += html_controlAlign3;
+  if (AlignMaxNumStars>=4) data += html_controlAlign4;
+  if (AlignMaxNumStars>=5) data += html_controlAlign5;
+  if (AlignMaxNumStars>=6) data += html_controlAlign6;
+  if (AlignMaxNumStars>=7) data += html_controlAlign7;
+  if (AlignMaxNumStars>=8) data += html_controlAlign8;
+  if (AlignMaxNumStars>=9) data += html_controlAlign9;
+  data += html_controlAlignX;
   data += html_control6;
   data += html_control7;
   data += html_control8;
@@ -197,6 +219,12 @@ void processControlGet() {
     if (v=="1") Serial.print(":A1#");
     if (v=="2") Serial.print(":A2#");
     if (v=="3") Serial.print(":A3#");
+    if (v=="4") Serial.print(":A4#");
+    if (v=="5") Serial.print(":A5#");
+    if (v=="6") Serial.print(":A6#");
+    if (v=="7") Serial.print(":A7#");
+    if (v=="8") Serial.print(":A8#");
+    if (v=="9") Serial.print(":A9#");
     if (v=="n") Serial.print(":A+#");
   }
   // Home/Park

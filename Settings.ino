@@ -1,7 +1,9 @@
 // The settings.htm page
 
-const char html_settings1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
-const char html_settings2[] = "</b></td><td align=\"right\"><b><font size=\"5\">SETTINGS</font></b></td></tr></table><br />";
+const char html_settings1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b><font size=\"5\">%s</font></b></td><td align=\"right\"><b>" Product " " Version " (OnStep %s)</b>";
+const char html_settings2[] = "</td></tr></table>";
+//const char html_settings1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
+//const char html_settings2[] = "</b></td><td align=\"right\"><b><font size=\"5\">SETTINGS</font></b></td></tr></table>";
 const char html_settings3[] = "</div><div class=\"b\">\r\n";
 const char html_settings4[] = 
 "Maximum Slew Speed: "
@@ -41,6 +43,20 @@ const char html_settingsMaxAlt[] =
 " <input value=\"%d\" type=\"number\" name=\"ol\" min=\"60\" max=\"90\">"
 "<button type=\"submit\">Upload</button>"
 " (Overhead, in degrees 60 to 90)"
+"</form>"
+"\r\n";
+const char html_settingsPastMerE[] = 
+"<form method=\"get\" action=\"/settings.htm\">"
+" <input value=\"%d\" type=\"number\" name=\"el\" min=\"-45\" max=\"45\">"
+"<button type=\"submit\">Upload</button>"
+" (Past Meridian when East of the pier, in degrees +/-45)"
+"</form>"
+"\r\n";
+const char html_settingsPastMerW[] = 
+"<form method=\"get\" action=\"/settings.htm\">"
+" <input value=\"%d\" type=\"number\" name=\"wl\" min=\"-45\" max=\"45\">"
+"<button type=\"submit\">Upload</button>"
+" (Past Meridian when West of the pier, in degrees +/-45)"
 "</form>"
 "<br />\r\n";
 const char html_settingsLongDeg[] = 
@@ -98,16 +114,16 @@ void handleSettings() {
   // finish the standard http response header
   Serial.print(":GVP#");
   temp2[Serial.readBytesUntil('#',temp2,20)]=0; 
-  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); }
+  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); } else { for (int i=2; i<7; i++) temp2[i]=temp2[i+1]; }
   Serial.print(":GVN#");
   temp3[Serial.readBytesUntil('#',temp3,20)]=0; 
   if (strlen(temp3)<=0) { strcpy(temp3,"N/A"); }
   sprintf(temp,html_settings1,temp2,temp3);
   data += temp;
   data += html_settings2;
-  data += html_links1;
-  data += html_links2;
-  data += html_links3;
+  data += html_links1se;
+  data += html_links2se;
+  data += html_links3se;
   data += html_settings3;
   data += html_settings4;
 
@@ -142,6 +158,24 @@ void handleSettings() {
   int maxAlt=(int)strtol(&temp2[0],NULL,10);
   sprintf(temp,html_settingsMaxAlt,maxAlt);
   data += temp;
+  strcpy(temp2,"");
+  Serial.print(":GXE9#");
+  temp2[Serial.readBytesUntil('#',temp2,20)]=0;
+  if (strlen(temp2)<=0) { strcpy(temp2,"0"); }
+  if (strcmp(temp2,"0")!=0) {
+    int degPastMerE=(int)strtol(&temp2[0],NULL,10);
+    degPastMerE=round((degPastMerE*15.0)/60.0);
+    sprintf(temp,html_settingsPastMerE,degPastMerE);
+    data += temp;
+    strcpy(temp2,"");
+    Serial.print(":GXEA#");
+    temp2[Serial.readBytesUntil('#',temp2,20)]=0;
+    if (strlen(temp2)<=0) { strcpy(temp2,"0"); }
+    int degPastMerW=(int)strtol(&temp2[0],NULL,10);
+    degPastMerW=round((degPastMerW*15.0)/60.0);
+    sprintf(temp,html_settingsPastMerW,degPastMerW);
+    data += temp;
+  } else data += "<br />\r\n";
 
   // Longitude
   Serial.print(":Gg#");
@@ -213,6 +247,24 @@ void processSettingsGet() {
   if (v!="") {
     if ( (atoi2((char*)v.c_str(),&i)) && ((i>=-30) && (i<=30))) { 
       sprintf(temp,":Sh%d#",i);
+      Serial.print(temp);
+    }
+  }
+
+  // Meridian Limits
+  v=server.arg("el");
+  if (v!="") {
+    if ( (atoi2((char*)v.c_str(),&i)) && ((i>=-45) && (i<=45))) { 
+      i=round((i*60.0)/15.0);
+      sprintf(temp,":SXE9,%d#",i);
+      Serial.print(temp);
+    }
+  }
+  v=server.arg("wl");
+  if (v!="") {
+    if ( (atoi2((char*)v.c_str(),&i)) && ((i>=-45) && (i<=45))) { 
+      i=round((i*60.0)/15.0);
+      sprintf(temp,":SXEA,%d#",i);
       Serial.print(temp);
     }
   }

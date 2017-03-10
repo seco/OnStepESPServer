@@ -3,8 +3,10 @@
 #define Axis1 "RA"
 #define Axis1A "RA"
 #define Axis2 "Dec"
-const char* html_index1 = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
-const char* html_index2 = "</b></td><td align=\"right\"><b><font size=\"5\">STATUS</font></b></td></tr></table><br />";
+const char html_index1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b><font size=\"5\">%s</font></b></td><td align=\"right\"><b>" Product " " Version " (OnStep %s)</b>";
+const char html_index2[] = "</td></tr></table>";
+//const char* html_index1 = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
+//const char* html_index2 = "</b></td><td align=\"right\"><b><font size=\"5\">STATUS</font></b></td></tr></table><br />";
 const char* html_indexSite = "</div><div class=\"b\">Longitude = <font class=\"c\">%s</font>, Latitude = <font class=\"c\">%s</font><br />";
 const char* html_indexDate = "<font class=\"c\">%s</font>";
 const char* html_indexTime= "&nbsp;<font class=\"c\">%s</font>&nbsp;UT";
@@ -57,7 +59,7 @@ void handleRoot() {
   // finish the standard http response header
   Serial.print(":GVP#");
   temp2[Serial.readBytesUntil('#',temp2,20)]=0; 
-  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); }
+  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); } else { for (int i=2; i<7; i++) temp2[i]=temp2[i+1]; }
   Serial.print(":GVN#");
   temp3[Serial.readBytesUntil('#',temp3,20)]=0; 
   if (strlen(temp3)<=0) { strcpy(temp3,"N/A"); }
@@ -65,10 +67,9 @@ void handleRoot() {
 
   data += temp;
   data += html_index2;
-  data += html_links1;
-  
-  data += html_links2;
-  data += html_links3;
+  data += html_links1in;
+  data += html_links2in;
+  data += html_links3in;
 
   // Longitude and Latitude
   Serial.print(":Gg#");
@@ -172,6 +173,14 @@ void handleRoot() {
   if (temp3[strlen(temp3)-2]==',') { temp3[strlen(temp3)-2]=')'; temp3[strlen(temp3)-1]=0; } else strcpy(temp3,"");
   sprintf(temp,html_indexTracking,temp2,temp3);
   data += temp;
+
+  // Tracking rate
+  Serial.print(":GT#");
+  temp4[Serial.readBytesUntil('#',temp4,20)]=0;
+  if (strlen(temp4)>7) {
+    sprintf(temp,"Tracking Rate: <font class=\"c\">%sHz<\font><br />",temp4);
+    data += temp;
+  }
 
   // Park
   if (strstr(stat,"p")) strcpy(temp2,"Not Parked"); else

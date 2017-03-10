@@ -1,9 +1,10 @@
 // The config.htm page ----------------------------------------------------------------------------------
 
-const char html_config1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
-const char html_config2[] = "</b></td><td align=\"right\"><b><font size=\"5\">";
-const char html_config3[] = "Config.h</font></b></td></tr></table><br />";
-const char html_config4[] = "</div><div class=\"b\">";
+const char html_config1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b><font size=\"5\">%s</font></b></td><td align=\"right\"><b>" Product " " Version " (OnStep %s)</b>";
+const char html_config2[] = "</td></tr></table>";
+//const char html_config1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
+//const char html_config2[] = "</b></td><td align=\"right\"><b><font size=\"5\">Config.h</font></b></td></tr></table><br />";
+const char html_config3[] = "</div><div class=\"b\">\r\n";
 
 const char html_debug[] = "Debug Mode: <font class=\"c\">%s</font><br /><br />";
 const char html_sync[] = "Sync Anywhere: <font class=\"c\">%s</font><br /><br />";
@@ -34,8 +35,6 @@ const char html_configStepsDegAx2[] = "Steps per degree for Axis2 (Dec/Alt) <fon
 const char html_configStepsPerSec[] = "Steps per second for tracking <font class=\"c\">%s</font><br /><br />";
 const char html_configStepsPerWR[] = "Steps per worm rotation for PEC <font class=\"c\">%s</font>, ";
 const char html_configPecBufSize[] = "PEC buffer size <font class=\"c\">%s</font> seconds<br /><br />";
-const char html_configMPME[] = "Minutes past meridian East <font class=\"c\">%s</font> minutes<br />";
-const char html_configMPMW[] = "Minutes past meridian West <font class=\"c\">%s</font> minutes<br />";
 const char html_configUPL[] = "Under pole limit <font class=\"c\">%s</font> hours<br />";
 const char html_configMinDec[] = "Minimum Declination <font class=\"c\">%s</font> degrees<br />";
 const char html_configMaxDec[] = "Maximum Declination <font class=\"c\">%s</font> degrees<br /><br />";
@@ -64,19 +63,18 @@ void handleConfig() {
   // finish the standard http response header
   Serial.print(":GVP#");
   temp2[Serial.readBytesUntil('#',temp2,20)]=0; 
-  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); }
+  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); } else { for (int i=2; i<7; i++) temp2[i]=temp2[i+1]; }
   Serial.print(":GVN#");
   temp3[Serial.readBytesUntil('#',temp3,20)]=0; 
   if (strlen(temp3)<=0) { strcpy(temp3,"N/A"); }
   sprintf(temp,html_config1,temp2,temp3);
   data += temp;
   data += html_config2;
-  data += html_config3;
-  data += html_links1;
-  data += html_links2;
-  data += html_links3;
+  data += html_links1co;
+  data += html_links2co;
+  data += html_links3co;
 
-  data += html_config4;
+  data += html_config3;
 
   Serial.print(":GXE0#");
   temp1[Serial.readBytesUntil('#',temp1,20)]=0;
@@ -209,20 +207,6 @@ void handleConfig() {
   temp1[Serial.readBytesUntil('#',temp1,20)]=0; 
   if (strlen(temp1)<=0) { strcpy(temp1,"N/A"); }
   sprintf(temp,html_configPecBufSize,temp1);
-  data += temp;
-
-  // Limit Minutes past Meridian East
-  Serial.print(":GXE9#");
-  temp1[Serial.readBytesUntil('#',temp1,20)]=0; 
-  if (strlen(temp1)<=0) { strcpy(temp1,"N/A"); }
-  sprintf(temp,html_configMPME,temp1);
-  data += temp;
-
-  // Limit Minutes past Meridian West
-  Serial.print(":GXEA#");
-  temp1[Serial.readBytesUntil('#',temp1,20)]=0; 
-  if (strlen(temp1)<=0) { strcpy(temp1,"N/A"); }
-  sprintf(temp,html_configMPMW,temp1);
   data += temp;
 
   // Limit Underpole

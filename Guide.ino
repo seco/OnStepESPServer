@@ -1,8 +1,9 @@
 // The guide.htm page
 
-const char html_guide1[] = 
-"<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
-const char html_guide2[] = "</b></td><td align=\"right\"><b><font size=\"5\">GUIDE</font></b></td></tr></table><br />";
+const char html_guide1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b><font size=\"5\">%s</font></b></td><td align=\"right\"><b>" Product " " Version " (OnStep %s)</b>";
+const char html_guide2[] = "</td></tr></table>";
+//const char html_guide1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
+//const char html_guide2[] = "</b></td><td align=\"right\"><b><font size=\"5\">GUIDE</font></b></td></tr></table><br />";
 const char html_guide3[] = "</div><div class=\"b\">\r\n";
 const char html_guide4[] = 
 "<script>function guide(dir,start) { var xhttp = new XMLHttpRequest(); "
@@ -55,16 +56,16 @@ void handleGuide() {
   // finish the standard http response header
   Serial.print(":GVP#");
   temp2[Serial.readBytesUntil('#',temp2,20)]=0; 
-  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); }
+  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); } else { for (int i=2; i<7; i++) temp2[i]=temp2[i+1]; }
   Serial.print(":GVN#");
   temp3[Serial.readBytesUntil('#',temp3,20)]=0;
   if (strlen(temp3)<=0) { strcpy(temp3,"N/A"); }
   sprintf(temp,html_guide1,temp2,temp3);
   data += temp;
   data += html_guide2;
-  data += html_links1;
-  data += html_links2;
-  data += html_links3;
+  data += html_links1gu;
+  data += html_links2gu;
+  data += html_links3gu;
 
   data += html_guide3;
   data += html_guide4;

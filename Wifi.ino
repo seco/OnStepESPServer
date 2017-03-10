@@ -1,7 +1,9 @@
 // The wifi.htm page
 
-const char html_wifi1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
-const char html_wifi2[] = "</b></td><td align=\"right\"><b><font size=\"5\">ESP8266 CONFIG</font></b></td></tr></table><br />";
+const char html_wifi1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b><font size=\"5\">%s</font></b></td><td align=\"right\"><b>" Product " " Version " (OnStep %s)</b>";
+const char html_wifi2[] = "</td></tr></table>";
+//const char html_wifi1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
+//const char html_wifi2[] = "</b></td><td align=\"right\"><b><font size=\"5\">ESP8266 CONFIG</font></b></td></tr></table><br />";
 const char html_wifi3[] = "</div><div class=\"b\">\r\n";
 const char html_wifiSerial[] = 
 "<b>Performance and compatibility:</b><br/>"
@@ -131,16 +133,16 @@ void handleWifi() {
   // finish the standard http response header
   Serial.print(":GVP#");
   temp2[Serial.readBytesUntil('#',temp2,20)]=0; 
-  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); }
+  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); } else { for (int i=2; i<7; i++) temp2[i]=temp2[i+1]; }
   Serial.print(":GVN#");
   temp3[Serial.readBytesUntil('#',temp3,20)]=0; 
   if (strlen(temp3)<=0) { strcpy(temp3,"N/A"); }
   sprintf(temp,html_wifi1,temp2,temp3);
   data += temp;
   data += html_wifi2;
-  data += html_links1;
-  data += html_links2;
-  data += html_links3;
+  data += html_links1es;
+  data += html_links2es;
+  data += html_links3es;
   data += html_wifi3;
 
   if (restartRequired) {
