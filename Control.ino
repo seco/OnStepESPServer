@@ -83,6 +83,7 @@ const char html_control13[] =
 
 void handleControl() {
   Serial.setTimeout(WebTimeout);
+  serialFlush();
 
   char temp[320] = "";
   char temp1[80]="";

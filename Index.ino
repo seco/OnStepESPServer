@@ -32,6 +32,7 @@ const char* html_indexWorkload = "Workload: <font class=\"c\">%s</font><br />";
 
 void handleRoot() {
   Serial.setTimeout(WebTimeout);
+  serialFlush();
 
   char temp[320]="";
   char temp1[80]="";

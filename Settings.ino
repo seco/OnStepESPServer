@@ -90,6 +90,7 @@ const char html_settingsOffsetMin[] =
 
 void handleSettings() {
   Serial.setTimeout(WebTimeout);
+  serialFlush();
   
   char temp[320]="";
   char temp1[80]="";

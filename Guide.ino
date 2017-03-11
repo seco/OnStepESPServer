@@ -37,6 +37,7 @@ const char html_guideControls8[] =
 
 void handleGuide() {
   Serial.setTimeout(WebTimeout);
+  serialFlush();
     
   char temp[320] = "";
   char temp1[80]="";

@@ -24,7 +24,8 @@ const char html_pecControls5[] =
 
 void handlePec() {
   Serial.setTimeout(WebTimeout);
-    
+  serialFlush();
+      
   char temp[320] = "";
   char temp1[320] = "";
   char temp2[80] = "";

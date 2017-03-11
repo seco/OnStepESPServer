@@ -41,6 +41,7 @@ const char html_configMaxDec[] = "Maximum Declination <font class=\"c\">%s</font
 
 void handleConfig() {
   Serial.setTimeout(WebTimeout);
+  serialFlush();
     
   char temp[320] = "";
   char temp1[80] = "";
