@@ -110,7 +110,10 @@ void processGuideGet() {
     if (v=="7") Serial.print(":R7#");
     if (v=="8") Serial.print(":R8#");
     if (v=="9") Serial.print(":R9#");
-    if (v=="q") Serial.print(":Q#");
+    if (v=="q") {
+      Serial.print(":Q#");
+      // clear response
+      temp[Serial.readBytesUntil('#',temp,20)]=0;    }
   }
   v=server.arg("dr");
   if (v!="") {
