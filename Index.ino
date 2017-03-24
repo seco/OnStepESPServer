@@ -159,7 +159,7 @@ void handleRoot() {
       Serial.print(":GX95#");
       temp4[Serial.readBytesUntil('#',temp4,20)]=0;
       if (strlen(temp4)>0) {
-        if (strstr(temp4, "0")) strcat(temp3,"</font>, <font class=\"c\">Automatic"); else strcat(temp3,"</font>, <font class=\"c\">not Automatic"); 
+        if (strstr(temp4, "0")) strcat(temp3,"</font>, <font class=\"c\">not Automatic"); else strcat(temp3,"</font>, <font class=\"c\">Automatic"); 
       }
     }
   }
