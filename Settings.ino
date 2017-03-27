@@ -159,11 +159,13 @@ void handleSettings() {
   int maxAlt=(int)strtol(&temp2[0],NULL,10);
   sprintf(temp,html_settingsMaxAlt,maxAlt);
   data += temp;
+
+  boolean foundHash;
   strcpy(temp2,"");
   Serial.print(":GXE9#");
-  temp2[Serial.readBytesUntil('#',temp2,20)]=0;
+  temp2[readBytesUntil2('#',temp2,20,&foundHash,WebTimeout)]=0;
   if (strlen(temp2)<=0) { strcpy(temp2,"0"); }
-  if (strcmp(temp2,"0")!=0) {
+  if (foundHash) {
     int degPastMerE=(int)strtol(&temp2[0],NULL,10);
     degPastMerE=round((degPastMerE*15.0)/60.0);
     sprintf(temp,html_settingsPastMerE,degPastMerE);

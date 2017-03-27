@@ -9,6 +9,21 @@ boolean atoi2(char *a, int *i) {
   return true;
 }
 
+// this readBytesUntil() lets you know if the "character" was found
+byte readBytesUntil2(char character, char buffer[], int length, boolean* characterFound, long timeout) {
+  unsigned long startTime=millis()+timeout;
+  int pos=0;
+  *characterFound=false;
+  while (((long)(startTime-millis())>0) && (pos<length)) {
+    if (Serial.available()) {
+      buffer[pos]=Serial.read();
+      if (buffer[pos]==character) { *characterFound=true; break; }
+      pos++;
+    }
+  }
+  return pos;
+}
+
 // smart LX200 aware command and response over serial
 boolean readLX200Bytes(char* command,char* recvBuffer,long timeOutMs) {
   Serial.setTimeout(timeOutMs);

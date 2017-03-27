@@ -40,7 +40,7 @@
 // -------------------------------------------------------------------------------
 
 #define Product "OnEsp"
-#define Version "0.9a 03 09 17"
+#define Version "0.9a 03 27 17"
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
