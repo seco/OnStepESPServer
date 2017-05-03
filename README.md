@@ -16,7 +16,7 @@ Download the OnStepESPServer.zip file from GitHub.
 
 Unzip the folder inside and rename it to "OnStepESPServer". This can be on your desktop or in your ~/Documents/Arduino folder.
 
-Open the OnStepESPServer.ino file inside this folder.  Check the "Config.h" file for info. about serial port wiring and configuration before uploading.  Once this is done upload to the ESP8266.
+Open the OnStepESPServer.ino file inside this folder.  Check the "Config.h" file for information about serial port wiring and to configure before uploading.  Once this is done upload to the ESP8266.
 
 Once the firmware is on the module simply connect the serial interface lines to OnStep's Serial1 port similar to how a Bluetooth module would be connected.
 
