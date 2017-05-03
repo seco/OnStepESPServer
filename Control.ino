@@ -19,11 +19,14 @@ const char html_control4b[] =
 const char html_control4c[] =
 "<script>\r\n"
 "function SetDateTime() {"
-"var d = new Date();"
+"var d1 = new Date();"
+"var jan = new Date(d1.getFullYear(), 0, 1);"
+"var d = new Date(d1.getTime()-(jan.getTimezoneOffset()-d1.getTimezoneOffset())*60*1000);";
+const char html_control4d[] =
 "document.getElementById(\"dd\").value = d.getDate();"
 "document.getElementById(\"dm\").value = d.getMonth();"
 "document.getElementById(\"dy\").value = d.getFullYear();";
-const char html_control4d[] =
+const char html_control4e[] =
 "document.getElementById(\"th\").value = d.getHours();"
 "document.getElementById(\"tm\").value = d.getMinutes();"
 "document.getElementById(\"ts\").value = d.getSeconds();"
@@ -137,6 +140,7 @@ void handleControl() {
   data += html_control4b;
   data += html_control4c;
   data += html_control4d;
+  data += html_control4e;
   data += html_controlAlign1;
   if (AlignMaxNumStars>=2) data += html_controlAlign2;
   if (AlignMaxNumStars>=3) data += html_controlAlign3;
