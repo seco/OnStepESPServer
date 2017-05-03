@@ -2,7 +2,7 @@
  * Title       OnStepESPServer
  * by          Howard Dutton
  *
- * Copyright (C) 2016 Howard Dutton
+ * Copyright (C) 2017 Howard Dutton
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,22 +32,17 @@
  *
  */
  
-// -------------------------------------------------------------------------------
-// Configuration
-#define DEBUG_OFF
-#define Default_Password "password"
-#define SERIAL_BAUD ":SB1#" // 0=115.2K, 1=57.6K, 2=38.4K Baud
-// -------------------------------------------------------------------------------
-
 #define Product "OnEsp"
-#define Version "0.9a 03 27 17"
+#define Version "1.0a 05 02 17"
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
+#include "Config.h"
 #include <ESP8266WebServer.h>
 #include <ESP8266WiFiAP.h>
 #include <EEPROM.h>
 
+#define Default_Password "password"
 char masterPassword[40]=Default_Password;
 
 bool accessPointEnabled=true;
@@ -69,8 +64,9 @@ IPAddress wifi_ap_ip = IPAddress(192,168,0,1);
 IPAddress wifi_ap_gw = IPAddress(192,168,0,1);
 IPAddress wifi_ap_sn = IPAddress(255,255,255,0);
 
-int WebTimeout=15;
-int CmdTimeout=30;
+// base timeouts
+int WebTimeout=TIMEOUT_WEB;  // default 15
+int CmdTimeout=TIMEOUT_CMD;  // default 30
 
 ESP8266WebServer server(80);
 
@@ -114,31 +110,33 @@ const char* html_main_css9 = "button { background-color: #A01010; font-weight: b
 
 const char* html_links1in = "<a href=\"/index.htm\" style=\"background-color: #552222;\">Status</a><a href=\"/control.htm\">Control</a>";
 const char* html_links2in = "<a href=\"/guide.htm\">Guide</a><a href=\"/pec.htm\">PEC</a><a href=\"/settings.htm\">Settings</a>";
-const char* html_links3in = "<a href=\"/wifi.htm\">ESP8266 Config</a><a href=\"/config.htm\">Config.h</a><br />";
+const char* html_links3in = "<a href=\"/wifi.htm\">WiFi</a><a href=\"/config.htm\">Config.h</a><br />";
 
 const char* html_links1ct = "<a href=\"/index.htm\">Status</a><a href=\"/control.htm\" style=\"background-color: #552222;\">Control</a>";
 const char* html_links2ct = "<a href=\"/guide.htm\">Guide</a><a href=\"/pec.htm\">PEC</a><a href=\"/settings.htm\">Settings</a>";
-const char* html_links3ct = "<a href=\"/wifi.htm\">ESP8266 Config</a><a href=\"/config.htm\">Config.h</a><br />";
+const char* html_links3ct = "<a href=\"/wifi.htm\">WiFi</a><a href=\"/config.htm\">Config.h</a><br />";
 
 const char* html_links1gu = "<a href=\"/index.htm\">Status</a><a href=\"/control.htm\">Control</a>";
 const char* html_links2gu = "<a href=\"/guide.htm\" style=\"background-color: #552222;\">Guide</a><a href=\"/pec.htm\">PEC</a><a href=\"/settings.htm\">Settings</a>";
-const char* html_links3gu = "<a href=\"/wifi.htm\">ESP8266 Config</a><a href=\"/config.htm\">Config.h</a><br />";
+const char* html_links3gu = "<a href=\"/wifi.htm\">WiFi</a><a href=\"/config.htm\">Config.h</a><br />";
 
 const char* html_links1pe = "<a href=\"/index.htm\">Status</a><a href=\"/control.htm\">Control</a>";
 const char* html_links2pe = "<a href=\"/guide.htm\">Guide</a><a href=\"/pec.htm\" style=\"background-color: #552222;\">PEC</a><a href=\"/settings.htm\">Settings</a>";
-const char* html_links3pe = "<a href=\"/wifi.htm\">ESP8266 Config</a><a href=\"/config.htm\">Config.h</a><br />";
+const char* html_links3pe = "<a href=\"/wifi.htm\">WiFi</a><a href=\"/config.htm\">Config.h</a><br />";
 
 const char* html_links1se = "<a href=\"/index.htm\">Status</a><a href=\"/control.htm\">Control</a>";
 const char* html_links2se = "<a href=\"/guide.htm\">Guide</a><a href=\"/pec.htm\">PEC</a><a href=\"/settings.htm\" style=\"background-color: #552222;\">Settings</a>";
-const char* html_links3se = "<a href=\"/wifi.htm\">ESP8266 Config</a><a href=\"/config.htm\">Config.h</a><br />";
+const char* html_links3se = "<a href=\"/wifi.htm\">WiFi</a><a href=\"/config.htm\">Config.h</a><br />";
 
 const char* html_links1es = "<a href=\"/index.htm\">Status</a><a href=\"/control.htm\">Control</a>";
 const char* html_links2es = "<a href=\"/guide.htm\">Guide</a><a href=\"/pec.htm\">PEC</a><a href=\"/settings.htm\">Settings</a>";
-const char* html_links3es = "<a href=\"/wifi.htm\" style=\"background-color: #552222;\">ESP8266 Config</a><a href=\"/config.htm\">Config.h</a><br />";
+const char* html_links3es = "<a href=\"/wifi.htm\" style=\"background-color: #552222;\">WiFi</a><a href=\"/config.htm\">Config.h</a><br />";
 
 const char* html_links1co = "<a href=\"/index.htm\">Status</a><a href=\"/control.htm\">Control</a>";
 const char* html_links2co = "<a href=\"/guide.htm\">Guide</a><a href=\"/pec.htm\">PEC</a><a href=\"/settings.htm\">Settings</a>";
-const char* html_links3co = "<a href=\"/wifi.htm\">ESP8266 Config</a><a href=\"/config.htm\" style=\"background-color: #552222;\">Config.h</a><br />";
+const char* html_links3co = "<a href=\"/wifi.htm\">WiFi</a><a href=\"/config.htm\" style=\"background-color: #552222;\">Config.h</a><br />";
+
+#define LED_PIN 2
 
 void handleNotFound(){
   String message = "File Not Found\n\n";
@@ -157,7 +155,7 @@ void handleNotFound(){
 
 void setup(void){
   delay(3000);
-  
+  pinMode(LED_PIN,OUTPUT);
   EEPROM.begin(1024);
 
 Restart:
@@ -211,17 +209,23 @@ Restart:
     wifi_ap_sn[0]=EEPROM.read(80); wifi_ap_sn[1]=EEPROM.read(81); wifi_ap_sn[2]=EEPROM.read(82); wifi_ap_sn[3]=EEPROM.read(83);    
   }
 
-Again:
-  char c=0;
-
-#ifdef DEBUG_OFF
+#ifndef DEBUG_ON
   Serial.begin(9600);
+#ifdef SERIAL_SWAP_ON
+  Serial.swap();
+#endif
+
+Again:
+  digitalWrite(LED_PIN,LOW);
+  char c=0;
 
   // clear the buffers and any noise on the serial lines
   for (int i=0; i<3; i++) {
     Serial.print(":#");
+    digitalWrite(LED_PIN,HIGH);
     delay(500);
     while (Serial.available()>0) { c=Serial.read(); }
+    digitalWrite(LED_PIN,LOW);
   }
 
   // safety net
@@ -239,11 +243,17 @@ Again:
   delay(50);
   int count=0; c=0;
   while (Serial.available()>0) { count++; c=Serial.read(); }
-  if ((c='1') && (count==1)) {
+  if ((c=='1') && (count==1)) {
     if (!strcmp(SERIAL_BAUD,":SB0#")) Serial.begin(115200); else
     if (!strcmp(SERIAL_BAUD,":SB1#")) Serial.begin(57600); else
-    if (!strcmp(SERIAL_BAUD,":SB2#")) Serial.begin(38400); else Serial.begin(9600);
+    if (!strcmp(SERIAL_BAUD,":SB2#")) Serial.begin(38400); else
+    if (!strcmp(SERIAL_BAUD,":SB3#")) Serial.begin(28800); else
+    if (!strcmp(SERIAL_BAUD,":SB4#")) Serial.begin(19200); else Serial.begin(9600);
+#ifdef SERIAL_SWAP_ON
+    Serial.swap();
+#endif
   } else {
+    digitalWrite(LED_PIN,HIGH);
     delay(5000);
     goto Again;
   }
@@ -326,7 +336,7 @@ Again:
   cmdSvr.setNoDelay(true);
   server.begin();
   
-  Serial.println("HTTP server started");
+//  Serial.println("HTTP server started");
 }
 
 void loop(void){

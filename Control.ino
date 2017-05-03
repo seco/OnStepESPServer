@@ -2,8 +2,6 @@
 
 const char html_control1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b><font size=\"5\">%s</font></b></td><td align=\"right\"><b>" Product " " Version " (OnStep %s)</b>";
 const char html_control2[] = "</td></tr></table>";
-//const char html_control1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
-//const char html_control2[] = "</b></td><td align=\"right\"><b><font size=\"5\">CONTROL</font></b></td></tr></table><br />";
 const char html_control3[] = "</div><div class=\"b\">\r\n";
 const char html_control4a[] = 
 "Date/Time:"
@@ -164,7 +162,7 @@ void handleControl() {
   }
   data += "</div></body></html>";
   
-  server.send(200, "text/html",data);
+  server.send(200, "text/html", data);
 }
 
 int get_temp_month;

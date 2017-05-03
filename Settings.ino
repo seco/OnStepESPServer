@@ -84,7 +84,8 @@ const char html_settingsOffsetDeg[] =
 const char html_settingsOffsetMin[] = 
 " <select name=\"u2\"><option value=\"0\" %s>00</option><option value=\"30\" %s>30</option><option value=\"45\" %s>45</option></select>&nbsp;min.&nbsp;"
 "<button type=\"submit\">Upload</button>"
-" (UTC Offset, in hours -12 to +14)"
+" (UTC Offset, in hours -12 to +14)<br />"
+"Opposite of a time-zone value, this is for Standard Time (not Daylight Time.)<br /><br />"
 "</form>"
 "\r\n";
 

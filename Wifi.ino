@@ -2,8 +2,6 @@
 
 const char html_wifi1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b><font size=\"5\">%s</font></b></td><td align=\"right\"><b>" Product " " Version " (OnStep %s)</b>";
 const char html_wifi2[] = "</td></tr></table>";
-//const char html_wifi1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
-//const char html_wifi2[] = "</b></td><td align=\"right\"><b><font size=\"5\">ESP8266 CONFIG</font></b></td></tr></table><br />";
 const char html_wifi3[] = "</div><div class=\"b\">\r\n";
 const char html_wifiSerial[] = 
 "<b>Performance and compatibility:</b><br/>"

@@ -5,12 +5,11 @@
 #define Axis2 "Dec"
 const char html_index1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b><font size=\"5\">%s</font></b></td><td align=\"right\"><b>" Product " " Version " (OnStep %s)</b>";
 const char html_index2[] = "</td></tr></table>";
-//const char* html_index1 = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version " / %s %s";
-//const char* html_index2 = "</b></td><td align=\"right\"><b><font size=\"5\">STATUS</font></b></td></tr></table><br />";
-const char* html_indexSite = "</div><div class=\"b\">Longitude = <font class=\"c\">%s</font>, Latitude = <font class=\"c\">%s</font><br />";
+const char html_index3[] = "</div><div class=\"b\">";
 const char* html_indexDate = "<font class=\"c\">%s</font>";
 const char* html_indexTime= "&nbsp;<font class=\"c\">%s</font>&nbsp;UT";
 const char* html_indexSidereal = "&nbsp;(<font class=\"c\">%s</font>&nbsp; Local Apparent Sidereal Time)<br /><br />";
+const char* html_indexSite = "Longitude = <font class=\"c\">%s</font>, Latitude = <font class=\"c\">%s</font><br /><br />";
 const char* html_indexTrue = "Absolute Position: " Axis1 "=<font class=\"c\">%ld</font> steps, " Axis2 "=<font class=\"c\">%ld</font> steps<br />";
 const char* html_indexIndex = "IHS=<font class=\"c\">%ld</font> steps, IDS=<font class=\"c\">%ld</font> steps<br />";
 const char* html_indexCorIdx = "IH=<font class=\"c\">%ld</font>\", ID=<font class=\"c\">%ld</font>\"<br />";
@@ -72,17 +71,8 @@ void handleRoot() {
   data += html_links1in;
   data += html_links2in;
   data += html_links3in;
-
-  // Longitude and Latitude
-  Serial.print(":Gg#");
-  temp2[Serial.readBytesUntil('#',temp2,20)]=0; 
-  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); }
-  Serial.print(":Gt#");
-  temp3[Serial.readBytesUntil('#',temp3,20)]=0;
-  if (strlen(temp3)<=0) { strcpy(temp3,"N/A"); }
-  sprintf(temp,html_indexSite,temp2,temp3);
-  data += temp;
-
+  data += html_index3;
+  
   // UTC Date
   Serial.print(":GX81#");
   temp2[Serial.readBytesUntil('#',temp2,20)]=0;
@@ -102,6 +92,16 @@ void handleRoot() {
   temp2[Serial.readBytesUntil('#',temp2,20)]=0;
   if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); }
   sprintf(temp,html_indexSidereal,temp2);
+  data += temp;
+
+  // Longitude and Latitude
+  Serial.print(":Gg#");
+  temp2[Serial.readBytesUntil('#',temp2,20)]=0; 
+  if (strlen(temp2)<=0) { strcpy(temp2,"N/A"); }
+  Serial.print(":Gt#");
+  temp3[Serial.readBytesUntil('#',temp3,20)]=0;
+  if (strlen(temp3)<=0) { strcpy(temp3,"N/A"); }
+  sprintf(temp,html_indexSite,temp2,temp3);
   data += temp;
 
   if ((!strstr(stat,"A")) && (!strstr(stat,"k"))) {  // not AltAzm and not Fork_Alt
@@ -183,10 +183,9 @@ void handleRoot() {
   Serial.print(":GT#");
   temp4[Serial.readBytesUntil('#',temp4,20)]=0;
   if (strlen(temp4)>6) {
-    double tr=0;
-    tr=atof(temp4);
+    double tr=atof(temp4);
     dtostrf(tr,5,3,temp4);
-    sprintf(temp,"Tracking Rate: <font class=\"c\">%sHz</font><br />",temp4);
+    sprintf(temp,"Tracking Rate: <font class=\"c\">%s</font>Hz<br />",temp4);
     data += temp;
   }
 

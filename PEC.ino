@@ -2,8 +2,6 @@
 
 const char html_pec1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b><font size=\"5\">%s</font></b></td><td align=\"right\"><b>" Product " " Version " (OnStep %s)</b>";
 const char html_pec2[] = "</td></tr></table>";
-//const char html_pec1[] = "<div class=\"t\"><table width=\"100%\"><tr><td><b>" Product " " Version ", %s %s";
-//const char html_pec2[] = "</b></td><td align=\"right\"><b><font size=\"5\">PEC</font></b></td></tr></table><br />";
 const char html_pec3[] = "</div><div class=\"b\">\r\n";
 const char html_pec4[] = "PEC: <br /><br />";
 const char html_pec5[] = "STATUS = <font class=\"c\">%s%s</font><br /><br />";
