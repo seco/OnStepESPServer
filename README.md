@@ -20,5 +20,5 @@ Open the OnStepESPServer.ino file inside this folder.  Check the "Config.h" file
 
 Once the firmware is on the module simply connect the serial interface lines to OnStep's Serial1 port similar to how a Bluetooth module would be connected.
 
-These modules require more power than the 3.3v regulator on a Mega2560 can supply so the WeMos or NodeMCU with on-board regulator can be handy.  The Teensy3.2's 3.3v regulator will run an ESP-01.  This should work with OnStep on any Platform (Mega2560, Teensy3.2, and Launchpad TM4C.)  The Teensy3.2 is well tested with it.
+These modules require more power than the 3.3v regulator on a Mega2560 can supply so the WeMos or NodeMCU with on-board regulator can be handy.  The Teensy3.2's 3.3v regulator will run an ESP-01.  This should work with OnStep on any Platform (Mega2560, Teensy3.2, and Launchpad TM4C.)  OnStep running on the Teensy3.2 is well tested with it.
 
