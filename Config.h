@@ -10,8 +10,8 @@
 
 // The settings below are for initialization only, afterward they are stored and recalled from EEPROM and must
 // be changed in the web interface OR with a reset (for initialization again) as described in the comments below
-#define TIMEOUT_WEB 15      // Default=15, if talking to a Mega2560 double the default
-#define TIMEOUT_CMD 30      // Default=30, if talking to a Mega2560 double the default
+#define TIMEOUT_WEB 15      // Default=15, if talking to a Mega2560 use 60
+#define TIMEOUT_CMD 30      // Default=30, if talking to a Mega2560 use 60
 
 // On first startup an AP will appear with an SSID of "ONSTEP", after connecting:
 // The web-site is at "192.168.0.1" and the cmd channel is at "192.168.0.1:9999".

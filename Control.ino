@@ -92,6 +92,7 @@ void handleControl() {
   char temp3[80]="";
 
   processControlGet();
+  Serial.setTimeout(WebTimeout);
  
   // Get the Align mode
   if (AlignMaxNumStars==-1) {
@@ -231,18 +232,21 @@ void processControlGet() {
     if (v=="9") Serial.print(":A9#");
     if (v=="n") Serial.print(":A+#");
     if (v=="q") Serial.print(":Q#");
+    Serial.setTimeout(WebTimeout*4);
   }
   // Home/Park
   v=server.arg("hm");
   if (v!="") {
     if (v=="r") Serial.print(":hF#");
     if (v=="f") Serial.print(":hC#");
+    Serial.setTimeout(WebTimeout*4);
   }
   v=server.arg("pk");
   if (v!="") {
     if (v=="p") Serial.print(":hP#");
     if (v=="u") Serial.print(":hR#");
     if (v=="s") Serial.print(":hQ#");
+    Serial.setTimeout(WebTimeout*4);
   }
   // Tracking control
   v=server.arg("tk");
