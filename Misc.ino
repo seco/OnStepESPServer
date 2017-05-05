@@ -57,7 +57,6 @@ boolean readLX200Bytes(char* command,char* recvBuffer,long timeOutMs) {
     }
 
 /*    
-    if (command[1]=='A') shortResponse=true;
     if (command[1]=='B') {
       if (strchr("+-",command[2])) noResponse=true;
     }
