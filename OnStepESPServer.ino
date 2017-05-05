@@ -210,7 +210,7 @@ Restart:
   }
 
 #ifndef DEBUG_ON
-  Serial.begin(9600);
+  Serial.begin(SERIAL_BAUD_DEFAULT);
 #ifdef SERIAL_SWAP_ON
   Serial.swap();
 #endif
@@ -282,16 +282,11 @@ Again:
   Serial.println(wifi_ap_sn.toString());
 
 #endif
-  
-//  stationDhcpEnabled=true;
-//  stationEnabled=true;
-//  accessPointEnabled=false;
 
   if ((stationEnabled) && (!stationDhcpEnabled)) WiFi.config(wifi_sta_ip, wifi_sta_gw, wifi_sta_sn);
   if (accessPointEnabled) WiFi.softAPConfig(wifi_ap_ip, wifi_ap_gw, wifi_ap_sn);
   
   if (accessPointEnabled && !stationEnabled) {
-    //WiFi.disconnect();
     WiFi.softAP(wifi_ap_ssid, wifi_ap_pwd, wifi_ap_ch);
     WiFi.mode(WIFI_AP);
   } else
@@ -335,8 +330,10 @@ Again:
   cmdSvr.begin();
   cmdSvr.setNoDelay(true);
   server.begin();
-  
-//  Serial.println("HTTP server started");
+
+#ifdef DEBUG_ON
+  Serial.println("HTTP server started");
+#endif
 }
 
 void loop(void){
@@ -354,29 +351,25 @@ void loop(void){
   }
 
   // check clients for data, if found get the command, send cmd and pickup the response, then return the response
-//  if (cmdSvrClient && cmdSvrClient.connected()) 
-  {
-    while (cmdSvrClient && cmdSvrClient.connected() && (cmdSvrClient.available()>0)) {
-      // get the data
-      byte b=cmdSvrClient.read();
-      writeBuffer[writeBufferPos]=b; writeBufferPos++; if (writeBufferPos>39) writeBufferPos=39; writeBuffer[writeBufferPos]=0;
+  while (cmdSvrClient && cmdSvrClient.connected() && (cmdSvrClient.available()>0)) {
+    // get the data
+    byte b=cmdSvrClient.read();
+    writeBuffer[writeBufferPos]=b; writeBufferPos++; if (writeBufferPos>39) writeBufferPos=39; writeBuffer[writeBufferPos]=0;
 
-      // send cmd and pickup the response
-      if (b=='#') {
-        char readBuffer[40]="";
-        readLX200Bytes(writeBuffer,readBuffer,CmdTimeout); writeBuffer[0]=0; writeBufferPos=0;
+    // send cmd and pickup the response
+    if (b=='#') {
+      char readBuffer[40]="";
+      readLX200Bytes(writeBuffer,readBuffer,CmdTimeout); writeBuffer[0]=0; writeBufferPos=0;
 
-        // return the response, if we have one
-        if (strlen(readBuffer)>0) {
-          if (cmdSvrClient && cmdSvrClient.connected()) {
-            cmdSvrClient.print(readBuffer);
-            delay(2);
-          }
+      // return the response, if we have one
+      if (strlen(readBuffer)>0) {
+        if (cmdSvrClient && cmdSvrClient.connected()) {
+          cmdSvrClient.print(readBuffer);
+          delay(2);
         }
+      }
 
-       // cmdSvrClient.stop();
-      } else server.handleClient();
-    }
+    } else server.handleClient();
   }
 }
 
