@@ -92,19 +92,21 @@ void handleConfig() {
   sprintf(temp,html_configMount,temp2);
   data += temp;
   if (temp1[3]=='0') strcpy(temp2,"OFF"); else 
-  if (temp1[3]=='1') strcpy(temp2,"ON (internal pullup resistors off)"); else
-  if (temp1[3]=='2') strcpy(temp2,"ON (internal pullup resistors on)"); else strcpy(temp2,"UNKNOWN");
+  if (temp1[3]=='1') strcpy(temp2,"ON"); else
+  if (temp1[3]=='2') strcpy(temp2,"ON (internal pullups)"); else strcpy(temp2,"UNKNOWN");
   sprintf(temp,html_configST4,temp2);
   data += temp;
   if (temp1[4]=='0') strcpy(temp2,"Default Pins"); else if (temp1[4]=='1') strcpy(temp2,"Alternate Pins"); else strcpy(temp2,"UNKNOWN");
   sprintf(temp,html_pinsST4,temp2);
   data += temp;
-  if (temp1[5]=='0') strcpy(temp2,"OFF"); else if (temp1[5]=='1') strcpy(temp2,"ON"); else strcpy(temp2,"UNKNOWN");
+  if (temp1[5]=='0') strcpy(temp2,"OFF"); else
+  if (temp1[5]=='1') strcpy(temp2,"ON"); else
+  if (temp1[5]=='2') strcpy(temp2,"ON (internal pullup)"); else strcpy(temp2,"UNKNOWN");
   sprintf(temp,html_configPPS,temp2);
   data += temp;
   if (temp1[6]=='0') strcpy(temp2,"OFF"); else
-  if (temp1[6]=='1') strcpy(temp2,"ON (internal pullup resistor off)"); else
-  if (temp1[6]=='2') strcpy(temp2,"ON (internal pullup resistor on)"); else strcpy(temp2,"UNKNOWN");
+  if (temp1[6]=='1') strcpy(temp2,"ON"); else
+  if (temp1[6]=='2') strcpy(temp2,"ON (internal pullup)"); else strcpy(temp2,"UNKNOWN");
   sprintf(temp,html_configPEC,temp2);
   data += temp;
   if (temp1[7]=='0') strcpy(temp2,"OFF"); else
