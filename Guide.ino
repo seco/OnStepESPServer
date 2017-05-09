@@ -122,6 +122,8 @@ void processGuideGet() {
     if (v=="s0") Serial.print(":Qs#");
     if (v=="e0") Serial.print(":Qe#");
     if (v=="w0") Serial.print(":Qw#");
+
+    if (v=="sy") Serial.print(":CS#");
   }
 }
 
