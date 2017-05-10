@@ -55,19 +55,15 @@ boolean readLX200Bytes(char* command,char* recvBuffer,long timeOutMs) {
       if (strchr("BNCDL!",command[2])) noResponse=true;
       if (strchr("o$W",command[2])) shortResponse=true;
     }
-
-/*    
     if (command[1]=='B') {
       if (strchr("+-",command[2])) noResponse=true;
     }
     if (command[1]=='C') {
       if (strchr("S",command[2])) noResponse=true;
     }
-*/
-
     if (command[1]=='h') {
       if (strchr("FC",command[2])) noResponse=true;
-      if (strchr("QPR",command[2])) shortResponse=true;
+      if (strchr("QPR",command[2])) { shortResponse=true; Serial.setTimeout(timeOutMs*2); }
     }
     if (command[1]=='T') {
       if (strchr("QR+-SLK",command[2])) noResponse=true;
